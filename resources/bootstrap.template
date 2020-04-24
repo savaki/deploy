@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  Prefix:
+    Description: "The account id of the top level deployment account"
+    Type: String
+    Default: "fairy"
+  Suffix:
+    Description: "The account id of the top level deployment account"
+    Type: String
+    Default: ""
+
+Resources:
+  AssetBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: 'AES256'
+      BucketName: !Sub '${Prefix}-${AWS::AccountId}-${AWS::Region}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+Outputs:
+  AssetBucket:
+    Description: "S3 asset bucket name"
+    Value: !Ref AssetBucket
+    Export:
+      Name: !Sub "${AWS::StackName}-AssetBucket"
+
+  AssetBucketARN:
+    Description: "S3 asset bucket arn"
+    Value: !GetAtt AssetBucket.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-AssetBucketARN"
