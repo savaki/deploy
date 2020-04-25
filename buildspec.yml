@@ -19,11 +19,10 @@ phases:
 
   build:
     commands: # requires AWS_ACCOUNT_ID env to be set
-      - env
       - go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o fairy main.go
       - IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${PREFIX}fairy:latest"
       - docker build -t "${IMAGE}" .
-      - docker push"${IMAGE}"
+      - docker push "${IMAGE}"
 
 cache:
   paths:
