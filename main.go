@@ -29,6 +29,7 @@ func main() {
 	app.UsageText = "fairy [command] [options]"
 	app.Commands = []cli.Command{
 		command.Deploy,
+		command.Version,
 	}
 	app.HideVersion = true
 	if err := app.Run(os.Args); err != nil {
