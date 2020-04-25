@@ -20,6 +20,7 @@ Resources:
             Principal:
               AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
             Action:
+              - 'ecr:BatchGetImage'
               - 'ecr:GetDownloadUrlForLayer'
               - 'ecr:BatchCheckLayerAvailability'
           - Sid: 'Allow Codebuild Pull'
