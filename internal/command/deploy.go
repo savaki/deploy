@@ -69,7 +69,7 @@ var Deploy = cli.Command{
 			Name:        "p,project",
 			Usage:       "project name",
 			Required:    true,
-			EnvVar:      "PROJECT",
+			EnvVar:      "PROJECT,CODEBUILD_INITIATOR",
 			Destination: &deployOptions.Project,
 		},
 		cli.StringFlag{
@@ -106,11 +106,10 @@ func deployCommand(_ *cli.Context) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if deployOptions.Project == "" {
-		if v := os.Getenv("CODEBUILD_INITIATOR"); v != "" {
-			deployOptions.Project = filepath.Base(v)
-			fmt.Printf("found CODEBUILD_INITIATOR.  assign project to %v\n", deployOptions.Project)
-		}
+	deployOptions.Project = filepath.Base(deployOptions.Project)
+	if v := os.Getenv("CODEBUILD_INITIATOR"); v == deployOptions.Project {
+		deployOptions.Project = filepath.Base(v)
+		fmt.Printf("found CODEBUILD_INITIATOR.  assign project to %v\n", deployOptions.Project)
 	}
 
 	banner.Println("deployment fairy started")
