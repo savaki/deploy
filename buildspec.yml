@@ -19,9 +19,7 @@ phases:
   build:
     commands:
       - go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o fairy main.go
-      - ACCOUNT_ID="$(echo ${CODEBUILD_BUILD_ARN} | awk -F: '{print $5}')"
-      - echo "ACCOUNT_ID=${ACCOUNT_ID}"
-      - IMAGE="${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${PREFIX}fairy:latest"
+      - IMAGE="${CODEBUILD_WEBHOOK_ACTOR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${PREFIX}fairy:latest"
       - docker build -t "${IMAGE}" .
       - docker push"${IMAGE}"
 
