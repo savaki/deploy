@@ -18,11 +18,12 @@ phases:
       golang: 1.14
   build:
     commands:
-      - env
-      - go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o fairy main.go
-      - IMAGE="${CODEBUILD_WEBHOOK_ACTOR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${PREFIX}fairy:latest"
-      - docker build -t "${IMAGE}" .
-      - docker push"${IMAGE}"
+      - "env"
+      - "go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o fairy main.go"
+      - "ACCOUNT_ID=$(echo ${CODEBUILD_BUILD_ARN} | awk -F: '{print $5}')"
+      - "IMAGE="${CODEBUILD_WEBHOOK_ACTOR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${PREFIX}fairy:latest""
+      - "docker build -t "${IMAGE}" ."
+      - "docker push ${IMAGE}"
 
 cache:
   paths:
