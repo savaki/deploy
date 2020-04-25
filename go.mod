@@ -10,6 +10,7 @@ require (
 	github.com/golang/protobuf v1.4.0 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/rakyll/statik v0.1.7
+	github.com/sanathkr/go-yaml v0.0.0-20170819195128-ed9d249f429b
 	github.com/urfave/cli v1.22.4
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )

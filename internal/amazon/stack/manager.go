@@ -28,6 +28,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/cloudformationiface"
 	gf "github.com/awslabs/goformation/v4"
+	"github.com/sanathkr/go-yaml"
 )
 
 const (
@@ -353,13 +354,17 @@ func hasPrefix(got string, prefixes ...string) bool {
 // getParameters introspects the yaml template body provided and selects parameters
 // from the list provided
 func getParameters(body string, all map[string]string) ([]cloudformation.Parameter, error) {
-	t, err := gf.ParseYAML([]byte(body))
-	if err != nil {
+	var content struct {
+		Parameters map[string]struct {
+			Type string `yaml:"Type"`
+		} `yaml:"Parameters"`
+	}
+	if err := yaml.Unmarshal([]byte(body), &content); err != nil {
 		return nil, fmt.Errorf("failed to parse cloudformation template: %w", err)
 	}
 
 	var params []cloudformation.Parameter
-	for name := range t.Parameters {
+	for name := range content.Parameters {
 		v, ok := all[name]
 		if ok {
 			params = append(params, cloudformation.Parameter{
