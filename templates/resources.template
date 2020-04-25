@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  Prefix:
+    Type: 'String'
+    Default: ''
+
+Resources:
+
+  Registry:
+    Type: AWS::ECR::Repository
+    Description: 'Repository to hold fairy image'
+    Properties:
+      RepositoryName: !Sub '${Prefix}fairy'
+      RepositoryPolicyText:
+        Version: '2008-10-17'
+        Statement:
+          - Sid: 'Allow Pull'
+            Effect: 'Allow'
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Action:
+              - 'ecr:GetDownloadUrlForLayer'
+              - 'ecr:BatchCheckLayerAvailability'
+          - Sid: 'Allow Codebuild Pull'
+            Effect: 'Allow'
+            Principal:
+              Service: 'codebuild.amazonaws.com'
+            Action:
+              - 'ecr:BatchGetImage'
+              - 'ecr:GetDownloadUrlForLayer'
+              - 'ecr:BatchCheckLayerAvailability'
