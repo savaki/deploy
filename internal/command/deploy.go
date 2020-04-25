@@ -17,6 +17,7 @@ package command
 import (
 	"context"
 	"fmt"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -104,6 +105,13 @@ func deployCommand(_ *cli.Context) error {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	if deployOptions.Project == "" {
+		if v := os.Getenv("CODEBUILD_INITIATOR"); v != "" {
+			deployOptions.Project = filepath.Base(v)
+			fmt.Printf("found CODEBUILD_INITIATOR.  assign project to %v\n", deployOptions.Project)
+		}
+	}
 
 	banner.Println("deployment fairy started")
 	defer func(begin time.Time) {
