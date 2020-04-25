@@ -103,6 +103,11 @@ func (m *Manager) Create(ctx context.Context, stack Stack) (err error) {
 		}
 	}()
 
+	params, err := getParameters(stack.TemplateBody, m.options.Parameters)
+	if err != nil {
+		return fmt.Errorf("failed to create stack, %v: %w", stack.Name, err)
+	}
+
 	if m.options.DryRun {
 		log.Printf("dry run.  create not applied for stack, %v - %v\n", stack.Name, err)
 		return nil
@@ -110,7 +115,7 @@ func (m *Manager) Create(ctx context.Context, stack Stack) (err error) {
 
 	input := cloudformation.CreateStackInput{
 		Capabilities: stack.Capabilities,
-		Parameters:   stack.Parameters,
+		Parameters:   params,
 		StackName:    aws.String(stack.Name),
 		Tags:         append(m.options.Tags[0:len(m.options.Tags):len(m.options.Tags)], stack.Tags...),
 		TemplateBody: aws.String(stack.TemplateBody),
@@ -253,6 +258,11 @@ func (m *Manager) Update(ctx context.Context, stack Stack) (err error) {
 		}
 	}()
 
+	params, err := getParameters(stack.TemplateBody, m.options.Parameters)
+	if err != nil {
+		return fmt.Errorf("failed to update stack, %v: %w", stack.Name, err)
+	}
+
 	if m.options.DryRun {
 		log.Printf("dry run.  update not applied for stack, %v - %v\n", stack.Name, err)
 		return nil
@@ -260,7 +270,7 @@ func (m *Manager) Update(ctx context.Context, stack Stack) (err error) {
 
 	input := cloudformation.UpdateStackInput{
 		Capabilities: stack.Capabilities,
-		Parameters:   stack.Parameters,
+		Parameters:   params,
 		StackName:    aws.String(stack.Name),
 		Tags:         append(m.options.Tags[0:len(m.options.Tags):len(m.options.Tags)], stack.Tags...),
 		TemplateBody: aws.String(stack.TemplateBody),
@@ -338,4 +348,26 @@ func hasPrefix(got string, prefixes ...string) bool {
 	}
 
 	return false
+}
+
+// getParameters introspects the yaml template body provided and selects parameters
+// from the list provided
+func getParameters(body string, all map[string]string) ([]cloudformation.Parameter, error) {
+	t, err := gf.ParseYAML([]byte(body))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse cloudformation template: %w", err)
+	}
+
+	var params []cloudformation.Parameter
+	for name := range t.Parameters {
+		v, ok := all[name]
+		if ok {
+			params = append(params, cloudformation.Parameter{
+				ParameterKey:   aws.String(name),
+				ParameterValue: aws.String(v),
+			})
+		}
+	}
+
+	return params, nil
 }
