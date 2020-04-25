@@ -18,6 +18,7 @@ phases:
       golang: 1.14
   build:
     commands:
+      - env
       - go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o fairy main.go
       - IMAGE="${CODEBUILD_WEBHOOK_ACTOR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${PREFIX}fairy:latest"
       - docker build -t "${IMAGE}" .
