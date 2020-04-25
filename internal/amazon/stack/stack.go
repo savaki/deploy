@@ -99,6 +99,9 @@ func LoadAll(dirname string, opts ...Option) ([]Stack, error) {
 
 	var stacks []Stack
 	fn := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if !strings.HasSuffix(path, suffix) {
 			return nil
 		}

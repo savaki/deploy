@@ -24,6 +24,9 @@ func Upload(ctx context.Context, config Config) error {
 	dir := filepath.Join(config.Dir, "resources")
 	dir = strings.TrimRight(dir, "/") + "/"
 	fn := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if info.IsDir() {
 			return nil
 		}
