@@ -52,7 +52,6 @@ func (c Change) String() string {
 }
 
 type Stack struct {
-	Capabilities []cloudformation.Capability
 	Name         string
 	Tags         []cloudformation.Tag
 	TemplateBody string

@@ -115,7 +115,9 @@ func (m *Manager) Create(ctx context.Context, stack Stack) (err error) {
 	}
 
 	input := cloudformation.CreateStackInput{
-		Capabilities: stack.Capabilities,
+		Capabilities: []cloudformation.Capability{
+			cloudformation.CapabilityCapabilityNamedIam,
+		},
 		Parameters:   params,
 		StackName:    aws.String(stack.Name),
 		Tags:         append(m.options.Tags[0:len(m.options.Tags):len(m.options.Tags)], stack.Tags...),
@@ -270,7 +272,9 @@ func (m *Manager) Update(ctx context.Context, stack Stack) (err error) {
 	}
 
 	input := cloudformation.UpdateStackInput{
-		Capabilities: stack.Capabilities,
+		Capabilities: []cloudformation.Capability{
+			cloudformation.CapabilityCapabilityNamedIam,
+		},
 		Parameters:   params,
 		StackName:    aws.String(stack.Name),
 		Tags:         append(m.options.Tags[0:len(m.options.Tags):len(m.options.Tags)], stack.Tags...),
