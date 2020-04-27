@@ -12,28 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package docker
 
 import (
+	"fmt"
 	"log"
 	"os"
-
-	"github.com/savaki/fairy/internal/command"
-	"github.com/urfave/cli"
+	"os/exec"
 )
 
-func main() {
-	app := cli.NewApp()
-	app.Name = "fairy"
-	app.Usage = "the deployment fairy makes your deployments come true"
-	app.UsageText = "fairy [command] [options]"
-	app.Commands = []cli.Command{
-		command.Deploy,
-		command.Docker,
-		command.Version,
+func Pull(dockerCLI, image string) error {
+	log.Printf("## %v pull %v\n", dockerCLI, image)
+
+	cmd := exec.Command(dockerCLI, "pull", image)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("docker pull failed: %w", err)
 	}
-	app.HideVersion = true
-	if err := app.Run(os.Args); err != nil {
-		log.Fatalln(err)
-	}
+
+	return nil
 }

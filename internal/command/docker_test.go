@@ -12,28 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package command
 
 import (
-	"log"
-	"os"
-
-	"github.com/savaki/fairy/internal/command"
-	"github.com/urfave/cli"
+	"testing"
 )
 
-func main() {
-	app := cli.NewApp()
-	app.Name = "fairy"
-	app.Usage = "the deployment fairy makes your deployments come true"
-	app.UsageText = "fairy [command] [options]"
-	app.Commands = []cli.Command{
-		command.Deploy,
-		command.Docker,
-		command.Version,
+func Test_parseImage(t *testing.T) {
+	s := "123456789012.dkr.ecr.us-west-2.amazonaws.com/dd-server:0.abc123"
+	image, err := parseImage(s)
+	if err != nil {
+		t.Fatalf("got %v; want nil", err)
 	}
-	app.HideVersion = true
-	if err := app.Run(os.Args); err != nil {
-		log.Fatalln(err)
+	if got, want := image.String(), s; got != want {
+		t.Fatalf("got %v; want %v", got, want)
 	}
 }
