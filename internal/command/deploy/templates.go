@@ -17,15 +17,17 @@ package deploy
 import (
 	"context"
 	"fmt"
+	"github.com/savaki/fairy/internal/banner"
 	"path/filepath"
 
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	"github.com/savaki/fairy/internal/amazon/stack"
-	"github.com/savaki/fairy/internal/banner"
 )
 
 // Templates upserts all templates from ${config.Dir}/templates if it exists
 func Templates(ctx context.Context, config Config) error {
+	banner.Println("deploying cloudformation templates ...")
+
 	opts := []stack.Option{
 		stack.WithPrefix(config.Env + "-" + config.Project),
 		stack.WithNameFormatter(func(s string) string { return "-" + s }),
@@ -36,10 +38,6 @@ func Templates(ctx context.Context, config Config) error {
 	stacks, err := stack.LoadAll(dir, opts...)
 	if err != nil {
 		return fmt.Errorf("unable to load templates from dir, %v: %w", dir, err)
-	}
-
-	if len(stacks) > 0 {
-		banner.Println("deploying cloudformation templates ...")
 	}
 
 	manager := stack.New(cloudformation.New(config.Target), opts...)

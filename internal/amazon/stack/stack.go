@@ -26,10 +26,11 @@ import (
 )
 
 const (
-	Env      = "Env"
-	S3Bucket = "S3Bucket"
-	S3Prefix = "S3Prefix"
-	Version  = "Version"
+	Env                  = "Env"
+	S3Bucket             = "S3Bucket"
+	S3Prefix             = "S3Prefix"
+	Version              = "Version"
+	CloudMapNamespaceARN = "CloudMapNamespaceARN"
 )
 
 type Operation string

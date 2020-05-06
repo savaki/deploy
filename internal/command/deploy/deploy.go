@@ -26,6 +26,7 @@ type Config struct {
 	Env        string
 	Project    string
 	Parameters map[string]string
+	VpcID      string
 }
 
 type Func func(ctx context.Context, config Config) error

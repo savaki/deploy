@@ -36,6 +36,7 @@ var deployOptions struct {
 	Project  string
 	RoleARN  string
 	Version  string
+	VpcID    string
 }
 
 var Deploy = cli.Command{
@@ -85,6 +86,12 @@ var Deploy = cli.Command{
 			Value:       "latest",
 			Destination: &deployOptions.Version,
 		},
+		cli.StringFlag{
+			Name:        "vpc",
+			Usage:       "aws vpc id",
+			EnvVar:      "VPC_ID",
+			Destination: &deployOptions.VpcID,
+		},
 	},
 }
 
@@ -123,6 +130,7 @@ func deployCommand(_ *cli.Context) error {
 		Dir:     deployOptions.Dir,
 		Env:     deployOptions.Env,
 		Project: deployOptions.Project,
+		VpcID:   deployOptions.VpcID,
 		Parameters: map[string]string{
 			stack.Env:      deployOptions.Env,
 			stack.S3Prefix: filepath.Join(deployOptions.S3Prefix, deployOptions.Project, deployOptions.Env, deployOptions.Version),
@@ -133,6 +141,7 @@ func deployCommand(_ *cli.Context) error {
 	var fns = []deploy.Func{
 		deploy.Bootstrap,
 		deploy.Upload,
+		deploy.CloudMapNamespaceIfNotExists,
 		deploy.Templates,
 	}
 
